@@ -1,0 +1,14 @@
+# Non-deployment jobs automatically check out source code. 
+# You can configure or suppress this behavior with checkout.
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+variables:
+  var1: value1
+jobs:
+- job: One
+  steps:
+  - checkout: self  # self represents the repo where the initial Pipelines YAML file was found
+    clean: all
+    fetchDepth: 5
+    lfs: true
+    path: PutMyCodeHere

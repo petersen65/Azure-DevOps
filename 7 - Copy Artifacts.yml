@@ -1,0 +1,16 @@
+# publish is a shortcut for the Publish Pipeline Artifact task. 
+# It will publish (upload) a file or folder as a pipeline artifact that can be consumed by other jobs and pipelines.
+# download is a shortcut for the Download Pipeline Artifact task. 
+# It will download one or more artifacts associated with the current run to $(Pipeline.Workspace). 
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+variables:
+  var1: value1
+jobs:
+- job: One
+  steps:
+  - publish: $(Build.SourcesDirectory)/build
+    artifact: WebApp
+  - download: current
+    artifact: WebApp
+    patterns: '**/.js'

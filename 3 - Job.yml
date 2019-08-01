@@ -1,0 +1,46 @@
+# A job is a collection of steps to be run by an agent or on the server. 
+# Jobs can be run conditionally, and they may depend on earlier jobs.
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+variables:
+  var1: value1
+resources:
+  containers:
+  - container: linux # reusable alias
+    image: ubuntu:16.04
+jobs:
+  - job: MyJob
+    displayName: My First Job
+    continueOnError: true
+    workspace:
+      clean: outputs
+    steps:
+    - script: echo My first job
+  - job: RunsInContainer
+    container: ubuntu:16.04 # Docker Hub image reference
+  - job: RunsInContainer2
+    container: # inline container specification
+      image: ubuntu:16.04
+      options: --hostname container-test --ip 192.168.0.1
+  - job: a
+    container: linux # reference
+  - job: b
+    container: linux # reference
+  
+  # Matrixing generates copies of a job with different inputs. 
+  # This is useful for testing against different configurations or platform versions.
+  # This matrix will create three jobs, "Build Python35", "Build Python36", and "Build Python37". 
+  # Within each job, a variable PYTHON_VERSION will be available. 
+  # In "Build Python35", it will be set to "3.5". Likewise, it will be "3.6" in "Build Python36". 
+  # Only 2 jobs will run simultaneously.
+  - job: Build
+    strategy:
+      matrix:
+        Python35:
+          PYTHON_VERSION: '3.5'
+        Python36:
+          PYTHON_VERSION: '3.6'
+        Python37:
+          PYTHON_VERSION: '3.7'
+      maxParallel: 2
+  

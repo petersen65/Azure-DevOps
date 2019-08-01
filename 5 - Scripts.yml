@@ -1,0 +1,30 @@
+# script is a shortcut for the command line task. It will run a script using cmd.exe on Windows and Bash on other platforms.
+# bash is a shortcut for the shell script task. It will run a script in Bash on Windows, macOS, or Linux.
+# pwsh is a shortcut for the PowerShell task with pwsh set to true. It will run a script in PowerShell Core on Windows, macOS, or Linux.
+# powershell is a shortcut for the PowerShell task. It will run a script in PowerShell on Windows.
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+trigger: none # will disable CI builds (but not PR builds)
+variables:
+  var1: value1
+jobs:
+- job: BuildJob
+  pool:
+    name: Hosted Windows 2019 with VS2019
+  steps:
+  - script: echo Hello world!
+    displayName: Say hello
+  - bash: |
+      which bash
+      echo Hello $name
+    displayName: Multiline Bash script
+  - pwsh: echo Hello $(var1)
+    displayName: Say hello
+    name: pwshStep
+    workingDirectory: $(build.sourcesDirectory)
+    failOnStderr: true
+  - powershell: echo Hello $(var1)
+    displayName: Say hello
+    name: powerShellStep
+    workingDirectory: $(build.sourcesDirectory)
+    failOnStderr: true

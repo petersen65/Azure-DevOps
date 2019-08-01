@@ -1,0 +1,33 @@
+# Pipelines are made of one or more stages describing a CI/CD process. 
+# Stages are the major divisions in a pipeline: 
+#     "build this app", "run these tests", and "deploy to pre-production" are good examples of stages.
+# Stages consist of one or more jobs, which are units of work assignable to a particular machine.
+# Jobs consist of a linear series of steps. Steps can be tasks, scripts, or references to external templates.
+# Both stages and jobs may be arranged into dependency graphs.
+
+# A pipeline hierarchy is reflected in the structure of the YAML file.
+# Pipeline
+#   Stage A
+#     Job 1
+#       Step 1.1
+#       Step 1.2
+#       ...
+#     Job 2
+#       Step 2.1
+#       Step 2.2
+#       ...
+#   Stage B
+#     ...
+
+# For simpler pipelines, not all of these levels are required. 
+# For example, in a single-job build, you can omit the containers for "stages" and "jobs" since there are only steps.
+name: $(Date:yyyyMMdd)$(Rev:.r)
+trigger: none # will disable CI builds (but not PR builds)
+variables:
+  var1: value1
+jobs:
+  - job: BuildJob
+    pool:
+      name: Hosted Ubuntu 1604
+    steps:
+    - script: echo First step!

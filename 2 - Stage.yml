@@ -1,0 +1,43 @@
+# A stage is a collection of related jobs. 
+# By default, stages run sequentially, starting only after the stage ahead of them has completed.
+# Jobs are units of work assignable to a particular machine.
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+trigger: none # will disable CI builds (but not PR builds)
+variables:
+  var1: value1
+stages:
+- stage: BuildWin
+  displayName: Build for Windows
+  jobs:
+  - job: BuildJob
+    pool:
+     name: Hosted Ubuntu 1604
+    steps:
+    - script: echo Building Windows!
+- stage: BuildMac
+  displayName: Build for Mac
+  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
+  jobs:
+  - job: BuildJob
+    pool:
+     name: Hosted Ubuntu 1604
+    steps:
+    - script: echo Building Mac!
+- stage: Test
+  jobs:
+  - job: TestOnWindows
+    pool:
+     name: Hosted Ubuntu 1604
+    steps:
+    - script: echo Testing on Windows!
+  - job: TestOnLinux
+    steps:
+    - script: echo Testing on Linux!
+- stage: Deploy
+  jobs:
+  - job: Deploy
+    pool:
+     name: Hosted Ubuntu 1604
+    steps:
+    - script: echo Deploying the code!

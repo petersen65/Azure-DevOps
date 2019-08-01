@@ -1,0 +1,16 @@
+# Tasks are the building blocks of a pipeline. There is a catalog of tasks available to choose from.
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+trigger: none # will disable CI builds (but not PR builds)
+variables:
+  vssolution: '**\Azure Blueprint.sln'
+jobs:
+- job: BuildJob
+  pool:
+    name: Hosted Windows 2019 with VS2019
+  steps:
+  - task: VSBuild@1
+    displayName: Build
+    timeoutInMinutes: 120
+    inputs:
+      solution: $(vssolution)

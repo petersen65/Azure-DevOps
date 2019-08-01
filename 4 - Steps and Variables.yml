@@ -1,0 +1,36 @@
+# Steps are a linear sequence of operations that make up a job. 
+# Each step runs in its own process on an agent and has access to the pipeline workspace on disk. 
+# This means environment variables are not preserved between steps but filesystem changes are.
+
+# Hardcoded variable values can be added directly, or variable groups can be referenced. 
+# Variables may be specified at the pipeline, stage, or job level.
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+trigger: none # will disable CI builds (but not PR builds)
+variables: # pipeline-level
+#  MY_VAR: 'my value'
+#  ANOTHER_VAR: 'another value'
+- name: MY_VARIABLE           # hardcoded value
+  value: some value
+# - group: my-variable-group-1  # variable group
+# - group: my-variable-group-2  # another variable group
+
+stages:
+- stage: Build
+  variables: # stage-level
+    STAGE_VAR: 'that happened'
+  jobs:
+    - job: BuildJob
+      pool:
+        name: Hosted Ubuntu 1604
+      variables:  # job-level
+        JOB_VAR: 'a job var'
+      steps:
+      - script: echo $(MY_VAR) $(STAGE_VAR) $(JOB_VAR)
+      - script: echo This runs in the default shell on any machine
+      - bash: |
+          echo This multiline script always runs in Bash.
+          echo Even on Windows machines!
+      - pwsh: |
+          Write-Host "This multiline script always runs in PowerShell Core."
+          Write-Host "Even on non-Windows machines!"
